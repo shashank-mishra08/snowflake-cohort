@@ -1,0 +1,28 @@
+# Snowflake credentials — never commit these
+.snowflake/
+snowflake.toml
+connections.toml
+*.p8
+*.pem
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
