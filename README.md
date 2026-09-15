@@ -65,3 +65,9 @@ Notes: [`docs/day01_architecture.md`](docs/day01_architecture.md) · [`docs/day0
 | 7–8 | dbt, migrations, GitHub Actions |
 | 9–10 | Dashboards, Streamlit, Cortex Analyst |
 | 11–15 | ML model, governed Cortex agent |
+
+
+
+
+
+
