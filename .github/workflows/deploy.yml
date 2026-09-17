@@ -21,14 +21,24 @@ jobs:
       - name: Install Snowflake CLI
         run: pip install snowflake-cli
 
-      - name: Deploy migrations to DEV
+      - name: Configure Snowflake key
         env:
-          SNOWFLAKE_CONNECTIONS_DEV: ${{ secrets.SNOWFLAKE_CONNECTIONS_DEV }}
+          SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
         run: |
-          mkdir -p ~/.snowflake
-          printf '%s' "$SNOWFLAKE_CONNECTIONS_DEV" > ~/.snowflake/config.toml
-          snow sql -f migrations/001_create_bronze_tables.sql -c dev
-          snow sql -f migrations/002_add_masking_policy.sql -c dev
+          printf '%s\n' "$SNOWFLAKE_PRIVATE_KEY" > "$HOME/snowflake_ci_key.pem"
+          chmod 600 "$HOME/snowflake_ci_key.pem"
+
+      - name: Deploy migrations to DEV
+        run: |
+          snow sql -f migrations/001_create_bronze_tables.sql \
+            -c dev \
+            --private-key-file "$HOME/snowflake_ci_key.pem" \
+            --authenticator SNOWFLAKE_JWT
+
+          snow sql -f migrations/002_add_masking_policy.sql \
+            -c dev \
+            --private-key-file "$HOME/snowflake_ci_key.pem" \
+            --authenticator SNOWFLAKE_JWT
 
   deploy-prod:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -41,11 +51,21 @@ jobs:
       - name: Install Snowflake CLI
         run: pip install snowflake-cli
 
-      - name: Deploy migrations to PROD
+      - name: Configure Snowflake key
         env:
-          SNOWFLAKE_CONNECTIONS_PROD: ${{ secrets.SNOWFLAKE_CONNECTIONS_PROD }}
+          SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
         run: |
-          mkdir -p ~/.snowflake
-          printf '%s' "$SNOWFLAKE_CONNECTIONS_PROD" > ~/.snowflake/config.toml
-          snow sql -f migrations/001_create_bronze_tables.sql -c prod
-          snow sql -f migrations/002_add_masking_policy.sql -c prod
+          printf '%s\n' "$SNOWFLAKE_PRIVATE_KEY" > "$HOME/snowflake_ci_key.pem"
+          chmod 600 "$HOME/snowflake_ci_key.pem"
+
+      - name: Deploy migrations to PROD
+        run: |
+          snow sql -f migrations/001_create_bronze_tables.sql \
+            -c prod \
+            --private-key-file "$HOME/snowflake_ci_key.pem" \
+            --authenticator SNOWFLAKE_JWT
+
+          snow sql -f migrations/002_add_masking_policy.sql \
+            -c prod \
+            --private-key-file "$HOME/snowflake_ci_key.pem" \
+            --authenticator SNOWFLAKE_JWT
