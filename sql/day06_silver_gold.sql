@@ -235,3 +235,12 @@ SELECT
     'GOLD CATEGORY SUMMARY' AS LAYER,
     COUNT(*) AS ROW_COUNT
 FROM RETAIL_LAKEHOUSE.GOLD.CATEGORY_SUMMARY;
+
+-- ------------------------------------------------------------
+-- 8. Stored Procedure Execution
+-- ------------------------------------------------------------
+--
+-- Stored procedure command: CALL
+--
+
+CALL RETAIL_LAKEHOUSE.SILVER.BUILD_SILVER_ORDERS();

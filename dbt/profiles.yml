@@ -1,0 +1,10 @@
+snowflake_cohort:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      role: ACCOUNTADMIN
+      warehouse: LEARN_WH
+      database: RETAIL_LAKEHOUSE
+      schema: DBT
+      threads: 8
