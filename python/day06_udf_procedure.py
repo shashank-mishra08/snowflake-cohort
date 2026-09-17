@@ -147,17 +147,15 @@ print(
     "registered successfully."
 )
 
-
 # ------------------------------------------------------------
 # 6. Execute the stored procedure
 # ------------------------------------------------------------
 
-result = session.sql("""
-    CALL RETAIL_LAKEHOUSE.SILVER.BUILD_SILVER_ORDERS()
-""")
+result = session.sql(
+    "CALL RETAIL_LAKEHOUSE.SILVER.BUILD_SILVER_ORDERS()"
+)
 
 result.show()
-
 
 # ------------------------------------------------------------
 # 7. Verify procedure output
