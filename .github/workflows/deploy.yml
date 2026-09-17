@@ -1,0 +1,51 @@
+name: Snowflake CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - "feature/**"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy-dev:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Snowflake CLI
+        run: pip install snowflake-cli
+
+      - name: Deploy migrations to DEV
+        env:
+          SNOWFLAKE_CONNECTIONS_DEV: ${{ secrets.SNOWFLAKE_CONNECTIONS_DEV }}
+        run: |
+          mkdir -p ~/.snowflake
+          printf '%s' "$SNOWFLAKE_CONNECTIONS_DEV" > ~/.snowflake/config.toml
+          snow sql -f migrations/001_create_bronze_tables.sql -c dev
+          snow sql -f migrations/002_add_masking_policy.sql -c dev
+
+  deploy-prod:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Snowflake CLI
+        run: pip install snowflake-cli
+
+      - name: Deploy migrations to PROD
+        env:
+          SNOWFLAKE_CONNECTIONS_PROD: ${{ secrets.SNOWFLAKE_CONNECTIONS_PROD }}
+        run: |
+          mkdir -p ~/.snowflake
+          printf '%s' "$SNOWFLAKE_CONNECTIONS_PROD" > ~/.snowflake/config.toml
+          snow sql -f migrations/001_create_bronze_tables.sql -c prod
+          snow sql -f migrations/002_add_masking_policy.sql -c prod
