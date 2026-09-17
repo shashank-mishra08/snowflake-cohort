@@ -63,8 +63,30 @@ Notes: [`docs/day01_architecture.md`](docs/day01_architecture.md) · [`docs/day0
 | 1 | Account, architecture, warehouse, TPC-H, `RETAIL_LAKEHOUSE` |
 | 2–6 | Ingest → Bronze / Silver / Gold |
 | 7–8 | dbt, migrations, GitHub Actions |
-| 9–10 | Dashboards, Streamlit, Cortex Analyst |
+| 9 | Query Profile, caches, warehouse resize, Resource Monitor |
+| 10 | Dashboards, Streamlit, Cortex Analyst |
 | 11–15 | ML model, governed Cortex agent |
+
+## Day 09 — Performance, Query Profile & cost
+
+Exam alignment: SnowPro Core — Performance (21%); SnowPro Advanced: Data Engineer — Performance Optimization and Monitoring.
+
+### What this day produces
+
+- Query Profile of a spilling sort on `LEARN_WH` X-Small (`TPCH_SF10.LINEITEM` CTAS `ORDER BY`)
+- Result-cache miss vs hit on identical SQL (24-hour persisted results)
+- Same sort on SMALL with **zero spill**, then warehouse reset to X-Small
+- Resource monitor `TRIAL_BUDGET` (50 credits, notify 75%, suspend 100%) on `LEARN_WH`
+
+Worksheet: [`sql/day09_performance.sql`](sql/day09_performance.sql) · monitor: [`sql/day09_resource_monitor.sql`](sql/day09_resource_monitor.sql) · diagnosis: [`docs/day09_performance_diagnosis.md`](docs/day09_performance_diagnosis.md) · profile: [`screenshots/day09_query_profile.png`](screenshots/day09_query_profile.png)
+
+### Verifier answers
+
+| # | Question | Answer |
+| --- | --- | --- |
+| Q1 | Hours a query result stays in the result cache after last use | **24** |
+| Q2 | Multi-cluster scaling policy that keeps clusters fully loaded before starting new ones | **Economy** |
+| Q3 | `trial_budget` action at 100 percent of the credit quota | **SUSPEND** |
 
 
 
