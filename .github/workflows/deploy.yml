@@ -29,8 +29,7 @@ jobs:
           chmod 700 "$HOME/.snowflake"
           umask 077
 
-          printf '%s\n' "$SNOWFLAKE_PRIVATE_KEY" > "$HOME/snowflake_ci_key.pem"
-          chmod 600 "$HOME/snowflake_ci_key.pem"
+          python3 scripts/write_snowflake_private_key.py
 
           cat > "$HOME/.snowflake/config.toml" <<EOF
           [connections.dev]
@@ -70,8 +69,7 @@ jobs:
           chmod 700 "$HOME/.snowflake"
           umask 077
 
-          printf '%s\n' "$SNOWFLAKE_PRIVATE_KEY" > "$HOME/snowflake_ci_key.pem"
-          chmod 600 "$HOME/snowflake_ci_key.pem"
+          python3 scripts/write_snowflake_private_key.py
 
           cat > "$HOME/.snowflake/config.toml" <<EOF
           [connections.prod]
