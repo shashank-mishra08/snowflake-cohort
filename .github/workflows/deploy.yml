@@ -26,6 +26,8 @@ jobs:
           SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
         run: |
           mkdir -p "$HOME/.snowflake"
+          chmod 700 "$HOME/.snowflake"
+          umask 077
 
           printf '%s\n' "$SNOWFLAKE_PRIVATE_KEY" > "$HOME/snowflake_ci_key.pem"
           chmod 600 "$HOME/snowflake_ci_key.pem"
@@ -41,6 +43,8 @@ jobs:
           authenticator = "SNOWFLAKE_JWT"
           private_key_file = "$HOME/snowflake_ci_key.pem"
           EOF
+
+          chmod 600 "$HOME/.snowflake/config.toml"
 
       - name: Deploy migrations to DEV
         run: |
@@ -63,6 +67,8 @@ jobs:
           SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
         run: |
           mkdir -p "$HOME/.snowflake"
+          chmod 700 "$HOME/.snowflake"
+          umask 077
 
           printf '%s\n' "$SNOWFLAKE_PRIVATE_KEY" > "$HOME/snowflake_ci_key.pem"
           chmod 600 "$HOME/snowflake_ci_key.pem"
@@ -78,6 +84,8 @@ jobs:
           authenticator = "SNOWFLAKE_JWT"
           private_key_file = "$HOME/snowflake_ci_key.pem"
           EOF
+
+          chmod 600 "$HOME/.snowflake/config.toml"
 
       - name: Deploy migrations to PROD
         run: |
