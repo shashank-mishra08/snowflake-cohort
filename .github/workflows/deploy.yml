@@ -21,24 +21,31 @@ jobs:
       - name: Install Snowflake CLI
         run: pip install snowflake-cli
 
-      - name: Configure Snowflake key
+      - name: Configure Snowflake authentication
         env:
           SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
         run: |
+          mkdir -p "$HOME/.snowflake"
+
           printf '%s\n' "$SNOWFLAKE_PRIVATE_KEY" > "$HOME/snowflake_ci_key.pem"
           chmod 600 "$HOME/snowflake_ci_key.pem"
 
+          cat > "$HOME/.snowflake/config.toml" <<EOF
+          [connections.dev]
+          account = "PAYDEGL-YJ88482"
+          user = "SHASHANKMISHRA08"
+          role = "ACCOUNTADMIN"
+          warehouse = "LEARN_WH"
+          database = "RETAIL_LAKEHOUSE"
+          schema = "BRONZE"
+          authenticator = "SNOWFLAKE_JWT"
+          private_key_file = "$HOME/snowflake_ci_key.pem"
+          EOF
+
       - name: Deploy migrations to DEV
         run: |
-          snow sql -f migrations/001_create_bronze_tables.sql \
-            -c dev \
-            --private-key-file "$HOME/snowflake_ci_key.pem" \
-            --authenticator SNOWFLAKE_JWT
-
-          snow sql -f migrations/002_add_masking_policy.sql \
-            -c dev \
-            --private-key-file "$HOME/snowflake_ci_key.pem" \
-            --authenticator SNOWFLAKE_JWT
+          snow sql -f migrations/001_create_bronze_tables.sql -c dev
+          snow sql -f migrations/002_add_masking_policy.sql -c dev
 
   deploy-prod:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -51,21 +58,28 @@ jobs:
       - name: Install Snowflake CLI
         run: pip install snowflake-cli
 
-      - name: Configure Snowflake key
+      - name: Configure Snowflake authentication
         env:
           SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
         run: |
+          mkdir -p "$HOME/.snowflake"
+
           printf '%s\n' "$SNOWFLAKE_PRIVATE_KEY" > "$HOME/snowflake_ci_key.pem"
           chmod 600 "$HOME/snowflake_ci_key.pem"
 
+          cat > "$HOME/.snowflake/config.toml" <<EOF
+          [connections.prod]
+          account = "PAYDEGL-YJ88482"
+          user = "SHASHANKMISHRA08"
+          role = "ACCOUNTADMIN"
+          warehouse = "LEARN_WH"
+          database = "RETAIL_LAKEHOUSE_PROD"
+          schema = "BRONZE"
+          authenticator = "SNOWFLAKE_JWT"
+          private_key_file = "$HOME/snowflake_ci_key.pem"
+          EOF
+
       - name: Deploy migrations to PROD
         run: |
-          snow sql -f migrations/001_create_bronze_tables.sql \
-            -c prod \
-            --private-key-file "$HOME/snowflake_ci_key.pem" \
-            --authenticator SNOWFLAKE_JWT
-
-          snow sql -f migrations/002_add_masking_policy.sql \
-            -c prod \
-            --private-key-file "$HOME/snowflake_ci_key.pem" \
-            --authenticator SNOWFLAKE_JWT
+          snow sql -f migrations/001_create_bronze_tables.sql -c prod
+          snow sql -f migrations/002_add_masking_policy.sql -c prod
