@@ -1,0 +1,142 @@
+name: retail_gold
+description: >
+  Governed Gold metrics for the retail lakehouse. Revenue excludes cancelled
+  orders. Ask about category mix, daily order volume, and order facts.
+
+tables:
+  - name: category_summary
+    description: One row per product category with rolled-up revenue and orders.
+    base_table:
+      database: RETAIL_LAKEHOUSE
+      schema: GOLD
+      table: CATEGORY_SUMMARY
+    dimensions:
+      - name: category
+        synonyms: ["product category", "department", "vertical"]
+        description: Product category (Electronics, Furniture).
+        expr: CATEGORY
+        data_type: TEXT
+        unique: true
+        sample_values: ["Electronics", "Furniture"]
+    measures:
+      - name: total_revenue
+        synonyms: ["revenue", "sales", "gmv"]
+        description: Sum of quantity times price for non-cancelled orders.
+        expr: TOTAL_REVENUE
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: order_count
+        synonyms: ["orders", "number of orders"]
+        description: Count of non-cancelled orders in the category.
+        expr: ORDER_COUNT
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: unique_customers
+        synonyms: ["customers", "buyers"]
+        description: Approximate distinct customers who ordered in the category.
+        expr: UNIQUE_CUSTOMERS
+        data_type: NUMBER
+        default_aggregation: sum
+
+  - name: orders_over_time
+    description: Daily Gold order volume and revenue.
+    base_table:
+      database: RETAIL_LAKEHOUSE
+      schema: GOLD
+      table: ORDERS_OVER_TIME
+    time_dimensions:
+      - name: order_date
+        synonyms: ["date", "day", "order day"]
+        description: Calendar day of the order.
+        expr: ORDER_DATE
+        data_type: DATE
+        unique: true
+    measures:
+      - name: daily_order_count
+        synonyms: ["orders per day", "daily orders"]
+        description: Orders placed that day, including cancelled.
+        expr: ORDER_COUNT
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: daily_revenue
+        synonyms: ["daily sales"]
+        description: Non-cancelled revenue for the day.
+        expr: TOTAL_REVENUE
+        data_type: NUMBER
+        default_aggregation: sum
+
+  - name: order_facts
+    description: One Gold row per order, enriched with product category.
+    base_table:
+      database: RETAIL_LAKEHOUSE
+      schema: GOLD
+      table: ORDER_FACTS
+    dimensions:
+      - name: category
+        synonyms: ["product category"]
+        description: Category of the ordered product.
+        expr: CATEGORY
+        data_type: TEXT
+        sample_values: ["Electronics", "Furniture"]
+      - name: product_name
+        synonyms: ["product", "item"]
+        description: Product name.
+        expr: PRODUCT_NAME
+        data_type: TEXT
+      - name: order_status
+        synonyms: ["status"]
+        description: COMPLETED, PENDING, or CANCELLED.
+        expr: ORDER_STATUS
+        data_type: TEXT
+        is_enum: true
+        sample_values: ["COMPLETED", "PENDING", "CANCELLED"]
+    time_dimensions:
+      - name: order_ts
+        synonyms: ["order time", "ordered at"]
+        description: Timestamp when the order was placed.
+        expr: ORDER_TS
+        data_type: TIMESTAMP
+    measures:
+      - name: order_value
+        synonyms: ["line value", "extended price"]
+        description: Quantity times unit price.
+        expr: ORDER_VALUE
+        data_type: NUMBER
+        default_aggregation: sum
+      - name: quantity
+        synonyms: ["units"]
+        description: Units ordered.
+        expr: QUANTITY
+        data_type: NUMBER
+        default_aggregation: sum
+
+verified_queries:
+  - name: revenue_by_category
+    question: What is total revenue by category?
+    verified_by: SHASHANKMISHRA08
+    use_as_onboarding_question: true
+    sql: |
+      SELECT
+        category,
+        SUM(total_revenue) AS total_revenue
+      FROM __category_summary
+      GROUP BY category
+      ORDER BY total_revenue DESC
+  - name: orders_by_category
+    question: How many orders are there in each category?
+    verified_by: SHASHANKMISHRA08
+    use_as_onboarding_question: true
+    sql: |
+      SELECT
+        category,
+        SUM(order_count) AS order_count
+      FROM __category_summary
+      GROUP BY category
+      ORDER BY order_count DESC
+  - name: total_revenue
+    question: What is the total revenue across all categories?
+    verified_by: SHASHANKMISHRA08
+    use_as_onboarding_question: true
+    sql: |
+      SELECT SUM(total_revenue) AS total_revenue
+      FROM __category_summary

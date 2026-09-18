@@ -88,6 +88,26 @@ Worksheet: [`sql/day09_performance.sql`](sql/day09_performance.sql) · monitor: 
 | Q2 | Multi-cluster scaling policy that keeps clusters fully loaded before starting new ones | **Economy** |
 | Q3 | `trial_budget` action at 100 percent of the credit quota | **SUSPEND** |
 
+## Day 10 — Dashboards, Streamlit, Cortex Analyst
+
+Exam alignment: SnowPro Core — Collaboration (10%).
+
+### What this day produces
+
+- Snowsight dashboard with 3 Gold tiles (KPI, bar, line)
+- Streamlit in Snowflake app with `st.selectbox` + `session.table(...).to_pandas()`
+- Cortex Analyst YAML semantic model with 3 verified queries
+
+App: [`streamlit/day10_app.py`](streamlit/day10_app.py) · model: [`semantic_models/retail_semantic_model.yaml`](semantic_models/retail_semantic_model.yaml) · tiles: [`sql/day10_dashboard.sql`](sql/day10_dashboard.sql) · screenshot: [`screenshots/day10_dashboard.png`](screenshots/day10_dashboard.png) · notes: [`docs/day10_front_doors.md`](docs/day10_front_doors.md)
+
+### Verifier answers
+
+| # | Question | Answer |
+| --- | --- | --- |
+| Q1 | File format of a Cortex Analyst semantic model | **YAML** |
+| Q2 | Streamlit dropdown widget (`st.___`) | **selectbox** |
+| Q3 | Snowpark method that returns a pandas DataFrame | **to_pandas** |
+
 
 
 
