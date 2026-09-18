@@ -1,0 +1,73 @@
+-- =============================================================================
+-- Day 11 — Built-in ML Functions (no model building)
+-- Role: ACCOUNTADMIN (CREATE SNOWFLAKE.ML.FORECAST)
+-- Warehouse: LEARN_WH
+--
+-- Gold ORDERS_OVER_TIME has only 2 days — too short for FORECAST.
+-- This worksheet builds GOLD.DAILY_REVENUE from TPC-H SF1 order dates
+-- (2,406 daily points, 1992-01-01 .. 1998-08-02), trains a forecast
+-- model in SQL, and predicts the next 14 days.
+--
+-- Snowsight: paste, set ACCOUNTADMIN + LEARN_WH, Run All.
+-- =============================================================================
+
+USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE LEARN_WH;
+USE DATABASE RETAIL_LAKEHOUSE;
+USE SCHEMA GOLD;
+
+
+CREATE OR REPLACE VIEW RETAIL_LAKEHOUSE.GOLD.DAILY_REVENUE AS
+SELECT
+    DATE_TRUNC('DAY', O_ORDERDATE)::TIMESTAMP_NTZ AS TS,
+    SUM(O_TOTALPRICE)::FLOAT AS REVENUE
+FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS
+GROUP BY 1;
+
+SELECT
+    MIN(TS) AS first_day,
+    MAX(TS) AS last_day,
+    COUNT(*) AS n_days,
+    SUM(REVENUE) AS total_revenue
+FROM RETAIL_LAKEHOUSE.GOLD.DAILY_REVENUE;
+
+
+-- Train. evaluate => FALSE skips extra CV to conserve trial credits.
+CREATE OR REPLACE SNOWFLAKE.ML.FORECAST RETAIL_LAKEHOUSE.GOLD.DAILY_REVENUE_FORECAST(
+    INPUT_DATA => TABLE(RETAIL_LAKEHOUSE.GOLD.DAILY_REVENUE),
+    TIMESTAMP_COLNAME => 'TS',
+    TARGET_COLNAME => 'REVENUE',
+    CONFIG_OBJECT => {'evaluate': FALSE}
+);
+
+
+-- Next 14 days after the last training timestamp.
+-- TABLE(...) and CALL are equivalent; both invoke the ML function.
+SELECT *
+FROM TABLE(RETAIL_LAKEHOUSE.GOLD.DAILY_REVENUE_FORECAST!FORECAST(
+    FORECASTING_PERIODS => 14
+));
+
+CALL RETAIL_LAKEHOUSE.GOLD.DAILY_REVENUE_FORECAST!FORECAST(
+    FORECASTING_PERIODS => 14
+);
+
+CREATE OR REPLACE TABLE RETAIL_LAKEHOUSE.GOLD.DAILY_REVENUE_FORECAST_14 AS
+SELECT * FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()));
+
+-- Training table for the Snowpark ML notebook (3k-row sample, not 1.5M).
+CREATE OR REPLACE TABLE RETAIL_LAKEHOUSE.GOLD.ML_ORDERS AS
+SELECT
+    O_ORDERKEY,
+    O_TOTALPRICE::FLOAT AS O_TOTALPRICE,
+    O_SHIPPRIORITY,
+    O_ORDERPRIORITY,
+    O_ORDERSTATUS,
+    IFF(O_ORDERSTATUS = 'F', 1, 0) AS IS_FULFILLED
+FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS
+SAMPLE (3000 ROWS);
+
+
+-- Optional: anomaly detection on the same series
+-- CREATE OR REPLACE SNOWFLAKE.ML.ANOMALY_DETECTION ...
+-- CALL <model>!DETECT_ANOMALIES(...);

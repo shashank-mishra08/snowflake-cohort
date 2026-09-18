@@ -108,6 +108,18 @@ App: [`streamlit/day10_app.py`](streamlit/day10_app.py) · model: [`semantic_mod
 | Q2 | Streamlit dropdown widget (`st.___`) | **selectbox** |
 | Q3 | Snowpark method that returns a pandas DataFrame | **to_pandas** |
 
+## Day 11 — Snowpark ML, Notebooks, ML Functions
+
+Exam alignment: SnowPro Advanced Data Engineer — Snowpark / Snowflake ML.
+
+### What this day produces
+
+- Built-in `SNOWFLAKE.ML.FORECAST` on 2,406 daily revenue points, 14-day horizon
+- Snowflake Notebook: Snowpark ML `StandardScaler` + `OneHotEncoder` + `RandomForestClassifier` + `accuracy_score`
+- Notes on in-platform training vs `to_pandas()` + sklearn
+
+Notebook: [`notebooks/day11_snowpark_ml.ipynb`](notebooks/day11_snowpark_ml.ipynb) · SQL: [`sql/day11_ml_functions.sql`](sql/day11_ml_functions.sql) · notes: [`docs/day11_training_notes.md`](docs/day11_training_notes.md)
+
 
 
 
