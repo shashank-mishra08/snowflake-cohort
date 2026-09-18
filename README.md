@@ -160,6 +160,27 @@ Notebook: [`notebooks/day13_registry.ipynb`](notebooks/day13_registry.ipynb) · 
 | Q2 | Registry method that stores a trained model | **log_model** |
 | Q3 | First `version_name` for `churn_model` | **v1** |
 
+## Day 14 — Cortex AISQL, Search, RAG
+
+Exam alignment: SnowPro Core — Cortex AI.
+
+### What this day produces
+
+- AISQL worksheet: `COMPLETE`, `AI_CLASSIFY`, `SUMMARIZE`, `AI_EXTRACT`
+- `CREATE CORTEX SEARCH SERVICE product_search` over 8 synthetic docs
+- RAG: retrieve → prompt → `SNOWFLAKE.CORTEX.COMPLETE`
+- This trial returns **399258** (COMPLETE / embeddings / EXTRACT blocked); SQL + Python still contain the production calls and a grounded keyword fallback
+
+SQL: [`sql/day14_cortex.sql`](sql/day14_cortex.sql) · RAG: [`python/day14_rag_chain.py`](python/day14_rag_chain.py) · eval: [`docs/day14_rag_eval.md`](docs/day14_rag_eval.md)
+
+### Verifier answers
+
+| # | Question | Answer |
+| --- | --- | --- |
+| Q1 | Cortex function that generates text (`SNOWFLAKE.CORTEX.___`) | **COMPLETE** |
+| Q2 | `CREATE CORTEX ___ SERVICE` | **SEARCH** |
+| Q3 | The R in RAG | **Retrieval** |
+
 
 
 
