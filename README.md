@@ -140,6 +140,26 @@ Notebook: [`notebooks/day12_feature_store.ipynb`](notebooks/day12_feature_store.
 | Q2 | Class that registers engineered features with a refresh frequency | **FeatureView** |
 | Q3 | DataFrame method for count/mean/stddev/min/max | **describe** |
 
+## Day 13 — Model Registry & deployment
+
+Exam alignment: SnowPro Advanced Data Engineer — Snowpark / ML deployment.
+
+### What this day produces
+
+- GridSearchCV on Day 12 PIT features (`best_params_`: depth 8, leaf 4, 10 trees)
+- `churn_model` **v1** in `RETAIL_LAKEHOUSE.ML_MODELS` with default + `PRODUCTION` alias
+- Batch scores in `GOLD.CHURN_SCORES`; SQL `CHURN_MODEL!PREDICT(...)` works on this trial
+
+Notebook: [`notebooks/day13_registry.ipynb`](notebooks/day13_registry.ipynb) · batch: [`python/day13_batch_inference.py`](python/day13_batch_inference.py) · notes: [`docs/day13_deployment_note.md`](docs/day13_deployment_note.md)
+
+### Verifier answers
+
+| # | Question | Answer |
+| --- | --- | --- |
+| Q1 | Snowpark ML class that tries every grid combination | **GridSearchCV** |
+| Q2 | Registry method that stores a trained model | **log_model** |
+| Q3 | First `version_name` for `churn_model` | **v1** |
+
 
 
 
