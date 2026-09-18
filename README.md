@@ -181,6 +181,27 @@ SQL: [`sql/day14_cortex.sql`](sql/day14_cortex.sql) · RAG: [`python/day14_rag_c
 | Q2 | `CREATE CORTEX ___ SERVICE` | **SEARCH** |
 | Q3 | The R in RAG | **Retrieval** |
 
+## Day 15 — Capstone (agent, cost, security, cert)
+
+Exam alignment: wraps **COF-C03** and **DEA-C02**.
+
+### What this day produces
+
+- Cortex Agent `RETAIL_AGENT` with **3 tools** (Analyst, Search, `GET_CATEGORY_REVENUE`)
+- Five mixed questions in [`docs/day15_agent_tests.md`](docs/day15_agent_tests.md)
+- Cost (~5.65 credits) and Trust Center notes
+- Portfolio architecture + 1-week study plan
+
+SQL: [`sql/day15_agent.sql`](sql/day15_agent.sql) · architecture: [`docs/architecture.md`](docs/architecture.md)
+
+### Verifier answers
+
+| # | Question | Answer |
+| --- | --- | --- |
+| Q1 | How many tools does the Cortex Agent have? | **3** |
+| Q2 | How many mixed questions? | **5** |
+| Q3 | SnowPro Advanced: Data Engineer exam code | **DEA-C02** |
+
 
 
 
