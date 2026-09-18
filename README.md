@@ -120,6 +120,26 @@ Exam alignment: SnowPro Advanced Data Engineer — Snowpark / Snowflake ML.
 
 Notebook: [`notebooks/day11_snowpark_ml.ipynb`](notebooks/day11_snowpark_ml.ipynb) · SQL: [`sql/day11_ml_functions.sql`](sql/day11_ml_functions.sql) · notes: [`docs/day11_training_notes.md`](docs/day11_training_notes.md)
 
+## Day 12 — Feature Store & point-in-time training
+
+Exam alignment: SnowPro Advanced Data Engineer — transformation / Snowpark.
+
+### What this day produces
+
+- EDA on `GOLD.CUSTOMER_ORDER_EVENTS` (`describe()`, null counts)
+- Entity `CUSTOMER` + FeatureView `customer_features` v1 (`refresh_freq='1 day'`)
+- Point-in-time training set vs Day 11 ad-hoc columns (0.515 → 0.963 accuracy)
+
+Notebook: [`notebooks/day12_feature_store.ipynb`](notebooks/day12_feature_store.ipynb) · notes: [`docs/day12_features.md`](docs/day12_features.md)
+
+### Verifier answers
+
+| # | Question | Answer |
+| --- | --- | --- |
+| Q1 | Feature Store object that defines the join key | **Entity** |
+| Q2 | Class that registers engineered features with a refresh frequency | **FeatureView** |
+| Q3 | DataFrame method for count/mean/stddev/min/max | **describe** |
+
 
 
 
